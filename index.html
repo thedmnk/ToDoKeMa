@@ -48,7 +48,7 @@ select option{background:var(--c2)}
 const {useState,useEffect,useRef,useCallback}=React;
 
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
-const VER="2.0.1";
+const VER="2.1.0";
 const SK="tdkm2";
 
 const EFFORTS={
@@ -116,7 +116,7 @@ const xpNext=xp=>{const l=getLevel(xp);return l>=20?XP_TABLE[19]:XP_TABLE[l];};
 const xpPct=xp=>{const l=getLevel(xp),prev=XP_TABLE[l-1]||0,next=xpNext(xp);return next>prev?(xp-prev)/(next-prev)*100:100;};
 
 function mkTask(d,i=0){
-  return{id:mkId()+i,text:d.text,cat:d.cat||"Allgemein",effort:d.effort||"medium",imp:d.imp??false,urg:d.urg??false,score:0,done:false,doneAt:null,subtasks:[],projectId:null};
+  return{id:mkId()+i,text:d.text,cat:d.cat||"Allgemein",effort:d.effort||"medium",imp:d.imp??false,urg:d.urg??false,score:0,urgScore:0,done:false,doneAt:null,subtasks:[],projectId:null};
 }
 
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -149,8 +149,8 @@ const load=()=>{try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}
 
 // ── TRANSLATIONS ─────────────────────────────────────────────────────────────
 const T={
-  de:{login:"Anmelden",reg:"Registrieren",name:"Name",pw:"Passwort",noacc:"Noch kein Konto?",haveacc:"Schon ein Konto?",wrongpw:"Falsches Passwort",exists:"Name vergeben",chooseClass:"Heldenklasse wählen",compare:"Vergleich",matrix:"Matrix",ranking:"Rangliste",hero:"Held",done:"Erledigt",manage:"Verwalten",whats:"Was ist wichtiger?",skip:"Überspringen →",alldone:"Alle Paare verglichen!",showrank:"Rangliste",restart:"Neu starten",addtask:"Aufgabe hinzufügen",newtask:"Neue Aufgabe…",cat:"Kategorie",effort:"Aufwand",imp:"Wichtig",urg:"Dringend",subtasks:"Zwischenziele",addsub:"Zwischenziel…",proj:"Projekt",newproj:"Neues Projekt…",newcat:"Neue Kategorie…",backup:"Backup",exportbtn:"Code kopieren",importbtn:"Importieren",importph:"Import-Code einfügen…",copied:"✓ Kopiert!",resetbtn:"Punkte zurücksetzen",resetconf:"Wirklich zurücksetzen?",logout:"Abmelden",lang:"EN",defeated:"besiegt",remaining:"übrig",bestiary:"Monsterbuch",achievements:"Errungenschaften",activetasks:"Aktive Aufgaben",donetasks:"Erledigt",level:"Level",noturg:"Nicht dringend",urgent:"Dringend",important:"Wichtig",unimportant:"Unwichtig",taptask:"Punkt antippen für Details",matchtie:"🎯 Gleichauf",matchclose:"⚡ Nah dran",matchfar:"📊 Unterschied",matchcross:"🔀 Tier-Übergang",sortdate:"Datum",sortcat:"Kategorie"},
-  en:{login:"Sign in",reg:"Register",name:"Name",pw:"Password",noacc:"No account yet?",haveacc:"Already have an account?",wrongpw:"Wrong password",exists:"Name taken",chooseClass:"Choose your class",compare:"Compare",matrix:"Matrix",ranking:"Ranking",hero:"Hero",done:"Done",manage:"Manage",whats:"What's more important?",skip:"Skip →",alldone:"All pairs compared!",showrank:"Ranking",restart:"Restart",addtask:"Add task",newtask:"New task…",cat:"Category",effort:"Effort",imp:"Important",urg:"Urgent",subtasks:"Subtasks",addsub:"Add subtask…",proj:"Project",newproj:"New project…",newcat:"New category…",backup:"Backup",exportbtn:"Copy code",importbtn:"Import",importph:"Paste import code…",copied:"✓ Copied!",resetbtn:"Reset scores",resetconf:"Reset all scores?",logout:"Sign out",lang:"DE",defeated:"defeated",remaining:"remaining",bestiary:"Bestiary",achievements:"Achievements",activetasks:"Active tasks",donetasks:"Completed",level:"Level",noturg:"Not urgent",urgent:"Urgent",important:"Important",unimportant:"Unimportant",taptask:"Tap dot for details",matchtie:"🎯 Even",matchclose:"⚡ Close",matchfar:"📊 Gap",matchcross:"🔀 Cross-tier",sortdate:"Date",sortcat:"Category"},
+  de:{login:"Anmelden",reg:"Registrieren",name:"Name",pw:"Passwort",noacc:"Noch kein Konto?",haveacc:"Schon ein Konto?",wrongpw:"Falsches Passwort",exists:"Name vergeben",chooseClass:"Heldenklasse wählen",urgent:"Dringend",compare:"Vergleich",matrix:"Matrix",ranking:"Rangliste",hero:"Held",done:"Erledigt",manage:"Verwalten",whats:"Was ist wichtiger?",skip:"Überspringen →",alldone:"Alle Paare verglichen!",showrank:"Rangliste",restart:"Neu starten",addtask:"Aufgabe hinzufügen",newtask:"Neue Aufgabe…",cat:"Kategorie",effort:"Aufwand",imp:"Wichtig",urg:"Dringend",subtasks:"Zwischenziele",addsub:"Zwischenziel…",proj:"Projekt",newproj:"Neues Projekt…",newcat:"Neue Kategorie…",backup:"Backup",exportbtn:"Code kopieren",importbtn:"Importieren",importph:"Import-Code einfügen…",copied:"✓ Kopiert!",resetbtn:"Punkte zurücksetzen",resetconf:"Wirklich zurücksetzen?",logout:"Abmelden",lang:"EN",defeated:"besiegt",remaining:"übrig",bestiary:"Monsterbuch",achievements:"Errungenschaften",activetasks:"Aktive Aufgaben",donetasks:"Erledigt",level:"Level",noturg:"Nicht dringend",urgent:"Dringend",important:"Wichtig",unimportant:"Unwichtig",taptask:"Punkt antippen für Details",matchtie:"🎯 Gleichauf",matchclose:"⚡ Nah dran",matchfar:"📊 Unterschied",matchcross:"🔀 Tier-Übergang",sortdate:"Datum",sortcat:"Kategorie"},
+  en:{login:"Sign in",reg:"Register",name:"Name",pw:"Password",noacc:"No account yet?",haveacc:"Already have an account?",wrongpw:"Wrong password",exists:"Name taken",chooseClass:"Choose your class",urgent:"Urgent",compare:"Compare",matrix:"Matrix",ranking:"Ranking",hero:"Hero",done:"Done",manage:"Manage",whats:"What's more important?",skip:"Skip →",alldone:"All pairs compared!",showrank:"Ranking",restart:"Restart",addtask:"Add task",newtask:"New task…",cat:"Category",effort:"Effort",imp:"Important",urg:"Urgent",subtasks:"Subtasks",addsub:"Add subtask…",proj:"Project",newproj:"New project…",newcat:"New category…",backup:"Backup",exportbtn:"Copy code",importbtn:"Import",importph:"Paste import code…",copied:"✓ Copied!",resetbtn:"Reset scores",resetconf:"Reset all scores?",logout:"Sign out",lang:"DE",defeated:"defeated",remaining:"remaining",bestiary:"Bestiary",achievements:"Achievements",activetasks:"Active tasks",donetasks:"Completed",level:"Level",noturg:"Not urgent",urgent:"Urgent",important:"Important",unimportant:"Unimportant",taptask:"Tap dot for details",matchtie:"🎯 Even",matchclose:"⚡ Close",matchfar:"📊 Gap",matchcross:"🔀 Cross-tier",sortdate:"Date",sortcat:"Category"},
 };
 
 // ── TDKM LOGO ────────────────────────────────────────────────────────────────
@@ -274,7 +274,10 @@ function AuthScreen({t,lang,setLang,state,onAuth,onLogin}){
 
 // ── USER APP ─────────────────────────────────────────────────────────────────
 function UserApp({u,updUser,lang,setLang,t,onLogout}){
-  const [view,setView]=useState("compare");
+  // Start with urgency round if not done today
+  const todayKey=new Date().toDateString();
+  const urgDoneToday=u.urgDate===todayKey;
+  const [view,setView]=useState(urgDoneToday?"compare":"urgent");
   const [chosen,setChosen]=useState(null);
   const [anim,setAnim]=useState(false);
   const [victory,setVictory]=useState(null);
@@ -296,6 +299,10 @@ function UserApp({u,updUser,lang,setLang,t,onLogout}){
   const active=tasks.filter(t=>!t.done);
   const doneTasks=tasks.filter(t=>t.done);
   const pairs=u.pairs||genPairs(active);
+  const urgPairs=u.urgPairs||genPairs(active);
+  const urgCi=u.urgCi||0;
+  const urgTotal=urgPairs.length;
+  const urgDone=urgCi>=urgTotal;
   const ci=u.ci||0;
   const total=pairs.length;
   const allDone=ci>=total;
@@ -307,6 +314,15 @@ function UserApp({u,updUser,lang,setLang,t,onLogout}){
   const heroClass=CLASSES.find(c=>c.id===u.heroClass)||CLASSES[0];
   const xp=u.xp||0;
   const lvl=getLevel(xp);
+
+  // Start urgency round fresh each day
+  useEffect(()=>{
+    const today=new Date().toDateString();
+    if(u.urgDate!==today){
+      updUser(u=>({...u,urgPairs:genPairs(u.tasks.filter(t=>!t.done)),urgCi:0,urgDate:today}));
+      setView("urgent");
+    }
+  },[]);
 
   const toggleDone=id=>{
     updUser(u=>{
@@ -324,6 +340,24 @@ function UserApp({u,updUser,lang,setLang,t,onLogout}){
       }
       return{...u,tasks:updated,pairs:genPairs(updated),ci:0};
     });
+  };
+
+  const chooseUrg=wid=>{
+    if(anim)return;
+    setChosen(wid);setAnim(true);
+    setTimeout(()=>{
+      updUser(u=>{
+        const updated=u.tasks.map(t=>t.id===wid?{...t,urgScore:(t.urgScore||0)+1}:t);
+        const newCi=(u.urgCi||0)+1;
+        const newTotal=(u.urgPairs||genPairs(active)).length;
+        // Auto-switch to compare when urgency done
+        if(newCi>=newTotal){
+          setTimeout(()=>setView("compare"),300);
+        }
+        return{...u,tasks:updated,urgCi:newCi};
+      });
+      setChosen(null);setAnim(false);
+    },280);
   };
 
   const choose=wid=>{
@@ -413,7 +447,7 @@ function UserApp({u,updUser,lang,setLang,t,onLogout}){
 
   const Nav=()=>(
     <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:600,display:"flex",background:"rgba(8,8,15,0.97)",borderTop:"1px solid rgba(255,255,255,0.07)",backdropFilter:"blur(20px)",zIndex:100,paddingBottom:"var(--sab)"}}>
-      {[{id:"compare",icon:"⚖️"},{id:"matrix",icon:"🔲"},{id:"ranking",icon:"🏆"},{id:"hero",icon:"⚔️"},{id:"timeline",icon:"✅"},{id:"manage",icon:"⚙️"}].map(({id,icon})=>(
+      {[{id:"urgent",icon:"⚡"},{id:"compare",icon:"⚖️"},{id:"matrix",icon:"🔲"},{id:"ranking",icon:"🏆"},{id:"hero",icon:"⚔️"},{id:"timeline",icon:"✅"},{id:"manage",icon:"⚙️"}].map(({id,icon})=>(
         <button key={id} onClick={()=>setView(id)} style={{flex:1,padding:"10px 2px 10px",background:"transparent",border:"none",borderTop:`2.5px solid ${view===id?"#6366f1":"transparent"}`,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
           <span style={{fontSize:20}}>{icon}</span>
           <span style={{fontSize:9,color:view===id?"#a78bfa":"#334155"}}>{t[id]||id}</span>
@@ -474,6 +508,55 @@ function UserApp({u,updUser,lang,setLang,t,onLogout}){
     </div>
   );
 
+  // ── URGENCY ROUND ──────────────────────────────────────────────────────────
+  if(view==="urgent"){
+    const urgPair=urgPairs[urgCi];
+    const uA=urgPair?gt(urgPair[0]):null,uB=urgPair?gt(urgPair[1]):null;
+    const urgValid=uA&&uB&&!uA.done&&!uB.done;
+    const urgProg=Math.min((urgCi/Math.max(urgTotal,1))*100,100);
+
+    return(
+      <Page>
+        <Header title={lang==="de"?"Dringlichkeit":"Urgency"}/>
+        <div style={{display:"flex",alignItems:"center",gap:10,padding:"0 16px",marginBottom:14}}>
+          <div style={{flex:1,height:4,background:"rgba(255,255,255,0.06)",borderRadius:99,overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${urgProg}%`,background:"linear-gradient(90deg,#ef4444,#f97316)",borderRadius:99,transition:"width 0.4s"}}/>
+          </div>
+          <span style={{fontSize:10,color:"#334155",minWidth:44,textAlign:"right"}}>{urgCi}/{urgTotal}</span>
+        </div>
+
+        {urgDone||!urgValid?(
+          <div style={{textAlign:"center",padding:"40px 20px"}}>
+            <div style={{fontSize:56,marginBottom:12}}>⚡</div>
+            <p style={{color:"#64748b",fontSize:16,marginBottom:8}}>{lang==="de"?"Dringlichkeit eingeschätzt!":"Urgency assessed!"}</p>
+            <p style={{color:"#334155",fontSize:13,marginBottom:24}}>{lang==="de"?"Weiter zum Wichtig-Vergleich":"Continue to importance comparison"}</p>
+            <button onClick={()=>setView("compare")} style={PB}>{lang==="de"?"Wichtig-Vergleich starten ⚔️":"Start importance comparison ⚔️"}</button>
+          </div>
+        ):(
+          <>
+            <p style={{fontSize:15,color:"#ef4444",textAlign:"center",marginBottom:6,padding:"0 16px",fontWeight:600}}>⚡ {lang==="de"?"Was ist dringender?":"What's more urgent?"}</p>
+            <p style={{fontSize:12,color:"#475569",textAlign:"center",marginBottom:14}}>{lang==="de"?"Was muss schneller erledigt werden?":"Which needs to be done sooner?"}</p>
+            <div style={{display:"flex",gap:10,padding:"0 16px",marginBottom:14}}>
+              {[uA,uB].map(task=>(
+                <div key={task.id} style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
+                  <button onClick={()=>chooseUrg(task.id)} disabled={anim} style={{width:"100%",aspectRatio:"1/1",minHeight:150,padding:"14px 12px",background:chosen===task.id?"rgba(239,68,68,0.2)":"rgba(255,255,255,0.04)",border:`1.5px solid ${chosen===task.id?"#ef4444":"rgba(255,255,255,0.09)"}`,borderRadius:18,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,textAlign:"center",outline:"none",transition:"all 0.2s",transform:chosen===task.id?"scale(1.02)":"scale(1)"}}>
+                    <span style={{fontSize:40}}>{monster(task).e}</span>
+                    <span style={{fontSize:14,color:"#e2e8f0",lineHeight:1.35}}>{task.text}</span>
+                    <Chips task={task}/>
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div style={{padding:"0 16px"}}>
+              <button onClick={()=>updUser(u=>({...u,urgCi:(u.urgCi||0)+1}))} style={SB}>{t.skip}</button>
+            </div>
+          </>
+        )}
+        <Nav/>
+      </Page>
+    );
+  }
+
   // ── COMPARE ────────────────────────────────────────────────────────────────
   if(view==="compare")return(
     <Page>
@@ -522,8 +605,10 @@ function UserApp({u,updUser,lang,setLang,t,onLogout}){
     const scoreMax=Math.max(...active.map(t=>t.score),1);
     const getDot=task=>{
       const jx=((task.id%17)/17-0.5)*22,jy=((task.id%13)/13-0.5)*14;
-      // X: urgent=right, not urgent=left
-      const x=Math.min(93,Math.max(7,(task.urg?68:32)+jx));
+      // X: urgScore based position (higher urgScore = more urgent = right)
+      const urgMax=Math.max(...active.map(t=>t.urgScore||0),1);
+      const urgPct=(task.urgScore||0)/urgMax;
+      const x=Math.min(93,Math.max(7,10+urgPct*80+jx));
       // Y: important=top(low value), not important=bottom(high value)
       // Score within each half adds nuance
       const baseY=task.imp?25:75;
