@@ -84,7 +84,7 @@
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.3.0";
 const STORAGE_KEY = "tdkm-v1";
 const EFFORT_LABELS = {
   small:  { de:"Klein",  en:"Small",  icon:"⚡" },
@@ -720,7 +720,7 @@ function UserApp({ user, updateUser, lang, setLang, t, onLogout }) {
           <TDKMLogo size={36}/>
           <div>
             <div style={S.hTitle}>{title}</div>
-            <div style={S.hSub}>{user.name} · {active.length} aktiv · {done_tasks.length} ✓</div>
+            <div style={S.hSub}>{user.name} · {active.length} aktiv · {done_tasks.length} ✓ · v{APP_VERSION}</div>
           </div>
         </div>
         <div style={{display:"flex",gap:6}}>
@@ -1351,7 +1351,7 @@ const S = {
   duelWrap:{ display:"flex", flexDirection:"row", gap:10, padding:"0 16px", marginBottom:10 },
   duelRow:{ display:"flex", gap:8, alignItems:"stretch" },
   duelCol:{ flex:1, display:"flex", flexDirection:"column" },
-  taskBtn:{ width:"100%", aspectRatio:"1/1", padding:"16px 12px", background:"rgba(255,255,255,0.04)", border:"1.5px solid rgba(255,255,255,0.09)", borderRadius:16, cursor:"pointer", transition:"all 0.2s", textAlign:"center", outline:"none", display:"flex", flexDirection:"column", gap:6, alignItems:"center", justifyContent:"center" },
+  taskBtn:{ width:"100%", aspectRatio:"1/1", padding:"16px 12px", background:"rgba(255,255,255,0.04)", border:"1.5px solid rgba(255,255,255,0.09)", borderRadius:16, cursor:"pointer", transition:"all 0.2s", textAlign:"center", outline:"none", display:"flex", flexDirection:"column", gap:6, alignItems:"center", justifyContent:"center", minHeight:160 },
   taskBtnWin:{ background:"rgba(79,70,229,0.22)", borderColor:"#4f46e5", transform:"scale(1.015)" },
   taskBtnText:{ fontSize:15, color:"#e2e8f0", lineHeight:1.4, textAlign:"center" },
   skipBtn:{ width:"100%", padding:"11px", background:"transparent", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, color:"#334155", cursor:"pointer", fontSize:13 },
